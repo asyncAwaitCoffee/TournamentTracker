@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace TrackerLibrary
 {
-    internal class PrizeModel
+    public class PrizeModel
     {
+        public int PlaceNumber { get; set; }
+        public string PlaceName { get; set; }
+        public decimal PrizeAmout { get; set; }
+        public double PrizePercentage { get; set; }
     }
 }

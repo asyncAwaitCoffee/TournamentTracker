@@ -8,9 +8,26 @@ namespace TrackerLibrary
 {
     public class PrizeModel
     {
+        /// <summary>
+        /// The unique identifier for the prize
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// The numeric identifier for the place
+        /// </summary>
         public int PlaceNumber { get; set; }
+        /// <summary>
+        /// The friendly string name for the place
+        /// </summary>
         public string PlaceName { get; set; }
+        /// <summary>
+        /// The fixed amount this place earns or 0 if it is not used
+        /// </summary>
         public decimal PrizeAmout { get; set; }
+        /// <summary>
+        /// The percentage of the overall take or 0 if it is not used
+        /// Fractions of 1, so 0.5 is 50%
+        /// </summary>
         public double PrizePercentage { get; set; }
     }
 }

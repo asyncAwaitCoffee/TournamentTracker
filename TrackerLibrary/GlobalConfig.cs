@@ -8,18 +8,22 @@ namespace TrackerLibrary
 {
     public static class GlobalConfig
     {
-        public static List<IDataConnection> Connections { get; private set; }
+        public static List<IDataConnection> Connections { get; private set; } = [];
 
         public static void InitializeConnections(bool database, bool textFiles)
         {
             if (database)
             {
                 //TODO - SQL connections
+                SqlConnector sql = new();
+                Connections.Add(sql);
             }
 
             if (textFiles)
             {
                 //TODO - text file connections
+                TextConnection textConnection = new();
+                Connections.Add(textConnection);
             }
         }
     }

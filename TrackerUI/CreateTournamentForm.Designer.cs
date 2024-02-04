@@ -41,8 +41,8 @@
             createPrizeButton = new Button();
             tournamentTeamsListBox = new ListBox();
             tournamentPlayersLabel = new Label();
-            deleteSelectedPlayerButton = new Button();
-            deleteSelectedPrizeButton = new Button();
+            removeSelectedPlayerButton = new Button();
+            removeSelectedPrizeButton = new Button();
             prizesLabel = new Label();
             prizesListBox = new ListBox();
             createTournamentButton = new Button();
@@ -124,6 +124,7 @@
             createNewTeamLink.TabIndex = 15;
             createNewTeamLink.TabStop = true;
             createNewTeamLink.Text = "create new";
+            createNewTeamLink.LinkClicked += createNewTeamLink_LinkClicked;
             // 
             // addTeamButton
             // 
@@ -153,6 +154,7 @@
             createPrizeButton.TabIndex = 17;
             createPrizeButton.Text = "Create Prize";
             createPrizeButton.UseVisualStyleBackColor = true;
+            createPrizeButton.Click += createPrizeButton_Click;
             // 
             // tournamentTeamsListBox
             // 
@@ -175,33 +177,35 @@
             tournamentPlayersLabel.TabIndex = 19;
             tournamentPlayersLabel.Text = "Teams / Players:";
             // 
-            // deleteSelectedPlayerButton
+            // removeSelectedPlayerButton
             // 
-            deleteSelectedPlayerButton.FlatAppearance.BorderColor = Color.Silver;
-            deleteSelectedPlayerButton.FlatAppearance.MouseDownBackColor = Color.DimGray;
-            deleteSelectedPlayerButton.FlatAppearance.MouseOverBackColor = Color.Gray;
-            deleteSelectedPlayerButton.FlatStyle = FlatStyle.Flat;
-            deleteSelectedPlayerButton.ForeColor = Color.IndianRed;
-            deleteSelectedPlayerButton.Location = new Point(747, 161);
-            deleteSelectedPlayerButton.Name = "deleteSelectedPlayerButton";
-            deleteSelectedPlayerButton.Size = new Size(133, 78);
-            deleteSelectedPlayerButton.TabIndex = 20;
-            deleteSelectedPlayerButton.Text = "Delete Selected";
-            deleteSelectedPlayerButton.UseVisualStyleBackColor = true;
+            removeSelectedPlayerButton.FlatAppearance.BorderColor = Color.Silver;
+            removeSelectedPlayerButton.FlatAppearance.MouseDownBackColor = Color.DimGray;
+            removeSelectedPlayerButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+            removeSelectedPlayerButton.FlatStyle = FlatStyle.Flat;
+            removeSelectedPlayerButton.ForeColor = Color.IndianRed;
+            removeSelectedPlayerButton.Location = new Point(747, 161);
+            removeSelectedPlayerButton.Name = "removeSelectedPlayerButton";
+            removeSelectedPlayerButton.Size = new Size(133, 78);
+            removeSelectedPlayerButton.TabIndex = 20;
+            removeSelectedPlayerButton.Text = "Remove Selected";
+            removeSelectedPlayerButton.UseVisualStyleBackColor = true;
+            removeSelectedPlayerButton.Click += removeSelectedPlayerButton_Click;
             // 
-            // deleteSelectedPrizeButton
+            // removeSelectedPrizeButton
             // 
-            deleteSelectedPrizeButton.FlatAppearance.BorderColor = Color.Silver;
-            deleteSelectedPrizeButton.FlatAppearance.MouseDownBackColor = Color.DimGray;
-            deleteSelectedPrizeButton.FlatAppearance.MouseOverBackColor = Color.Gray;
-            deleteSelectedPrizeButton.FlatStyle = FlatStyle.Flat;
-            deleteSelectedPrizeButton.ForeColor = Color.IndianRed;
-            deleteSelectedPrizeButton.Location = new Point(747, 383);
-            deleteSelectedPrizeButton.Name = "deleteSelectedPrizeButton";
-            deleteSelectedPrizeButton.Size = new Size(133, 78);
-            deleteSelectedPrizeButton.TabIndex = 23;
-            deleteSelectedPrizeButton.Text = "Delete Selected";
-            deleteSelectedPrizeButton.UseVisualStyleBackColor = true;
+            removeSelectedPrizeButton.FlatAppearance.BorderColor = Color.Silver;
+            removeSelectedPrizeButton.FlatAppearance.MouseDownBackColor = Color.DimGray;
+            removeSelectedPrizeButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+            removeSelectedPrizeButton.FlatStyle = FlatStyle.Flat;
+            removeSelectedPrizeButton.ForeColor = Color.IndianRed;
+            removeSelectedPrizeButton.Location = new Point(747, 383);
+            removeSelectedPrizeButton.Name = "removeSelectedPrizeButton";
+            removeSelectedPrizeButton.Size = new Size(133, 78);
+            removeSelectedPrizeButton.TabIndex = 23;
+            removeSelectedPrizeButton.Text = "Remove Selected";
+            removeSelectedPrizeButton.UseVisualStyleBackColor = true;
+            removeSelectedPrizeButton.Click += removeSelectedPrizeButton_Click;
             // 
             // prizesLabel
             // 
@@ -245,10 +249,10 @@
             BackColor = Color.White;
             ClientSize = new Size(919, 606);
             Controls.Add(createTournamentButton);
-            Controls.Add(deleteSelectedPrizeButton);
+            Controls.Add(removeSelectedPrizeButton);
             Controls.Add(prizesLabel);
             Controls.Add(prizesListBox);
-            Controls.Add(deleteSelectedPlayerButton);
+            Controls.Add(removeSelectedPlayerButton);
             Controls.Add(tournamentPlayersLabel);
             Controls.Add(tournamentTeamsListBox);
             Controls.Add(createPrizeButton);
@@ -284,8 +288,8 @@
         private Button createPrizeButton;
         private ListBox tournamentTeamsListBox;
         private Label tournamentPlayersLabel;
-        private Button deleteSelectedPlayerButton;
-        private Button deleteSelectedPrizeButton;
+        private Button removeSelectedPlayerButton;
+        private Button removeSelectedPrizeButton;
         private Label prizesLabel;
         private ListBox prizesListBox;
         private Button createTournamentButton;

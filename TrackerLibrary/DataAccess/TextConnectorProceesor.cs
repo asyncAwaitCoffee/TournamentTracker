@@ -88,6 +88,8 @@ namespace TrackerLibrary.DataAccess.TextHelpers
                 {
                     team.TeamMembers.Add(persons.Where(p => int.Parse(id) == p.Id).First());
                 }
+
+                output.Add(team);
             }
 
             return output;

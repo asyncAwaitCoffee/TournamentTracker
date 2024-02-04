@@ -110,7 +110,7 @@ namespace TrackerUI
                 WireUpLists();
 
                 firstNameValue.Text = "";
-        
+
                 lastNameValue.Text = "";
                 emailValue.Text = "";
                 cellphoneValue.Text = "";
@@ -135,6 +135,18 @@ namespace TrackerUI
             availibleTeamMembers.Add(p);
 
             WireUpLists();
+        }
+
+        private void createTeamButton_Click(object sender, EventArgs e)
+        {
+            TeamModel team = new TeamModel();
+
+            team.TeamName = teamNameValue.Text;
+            team.TeamMembers = selectedTeamMembers;
+
+            team = GlobalConfig.Connection.CreateTeam(team);
+
+            // TODO - should reset the form if we are not closing it after the team creation
         }
     }
 }

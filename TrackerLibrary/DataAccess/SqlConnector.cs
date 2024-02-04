@@ -97,5 +97,25 @@ namespace TrackerLibrary.DataAccess
 
             return output;
         }
+
+        public List<TeamModel> GetTeam_All()
+        {
+            List<TeamModel> output;
+
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                output = connection.Query<TeamModel>("TOURNAMENT_TRACKER.USP_GET_TEAM_ALL").ToList();
+
+                foreach (TeamModel team in output)
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@TEAM_ID", team.Id);
+                    team.TeamMembers = connection.Query<PersonModel>("TOURNAMENT_TRACKER.USP_GET_TEAM_MEMBERS_BY_TEAM", p, commandType: CommandType.StoredProcedure).ToList();
+                }
+
+            }
+
+            return output;
+        }
     }
 }

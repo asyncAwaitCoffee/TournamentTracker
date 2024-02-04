@@ -16,6 +16,25 @@ namespace TrackerLibrary.DataAccess
 {
     public class SqlConnector : IDataConnection
     {
+        public PersonModel CreatePerson(PersonModel model)
+        {
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.CnnString("COURSES_DB")))
+            {
+                var p = new DynamicParameters();
+                p.Add("@FIRST_NAME", model.FirstName);
+                p.Add("@LAST_NAME", model.LastName);
+                p.Add("@EMAIL_ADRESS", model.EmailAdress);
+                p.Add("@CELLPHONE_NUMBER", model.CellphoneNumber);
+                p.Add("@ID", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                connection.Execute("TOURNAMENT_TRACKER.USP_ADD_PERSON", p, commandType: CommandType.StoredProcedure);
+
+                model.Id = p.Get<int>("@ID");
+
+                return model;
+            }
+        }
+
         //TODO - implement CreatePrize method
         /// <summary>
         /// Saves a new prize to the database

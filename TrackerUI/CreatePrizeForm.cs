@@ -46,7 +46,7 @@ namespace TrackerUI
 
         private bool ValidateForm()
         {
-            //return false immediately VS accumulate all "errors" and display information to user
+            // TODO - return false immediately VS accumulate all "errors" and display information to user
             bool output = true;
             int placeNumber = 0;
             bool placeNumberValidNumber = int.TryParse(placeNumberValue.Text, out placeNumber);

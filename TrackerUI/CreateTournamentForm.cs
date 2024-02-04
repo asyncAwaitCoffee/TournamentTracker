@@ -12,7 +12,7 @@ using TrackerLibrary.Models;
 
 namespace TrackerUI
 {
-    public partial class CreateTournamentForm : Form
+    public partial class CreateTournamentForm : Form, IPrizeRequester, ITeamRequester
     {
         List<TeamModel> availableTeams = GlobalConfig.Connection.GetTeam_All();
         List<TeamModel> selectedTeams = new List<TeamModel>();
@@ -49,6 +49,67 @@ namespace TrackerUI
 
             availableTeams.Remove(t);
             selectedTeams.Add(t);
+
+            WireUpLists();
+        }
+
+        private void createPrizeButton_Click(object sender, EventArgs e)
+        {
+            // Call the CreatePrizeForm
+            CreatePrizeForm form = new CreatePrizeForm(this);
+            form.ShowDialog();
+
+
+        }
+
+        public void PrizeComplete(PrizeModel model)
+        {
+            // Get created PrizeForm
+            // Add it to the selected prizes
+
+            selectedPrizes.Add(model);
+            WireUpLists();
+        }
+
+        public void TeamComplete(TeamModel model)
+        {
+            selectedTeams.Add(model);
+
+            WireUpLists();
+        }
+
+        private void createNewTeamLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            CreateTeamForm form = new CreateTeamForm(this);
+            form.Show();
+        }
+
+        private void removeSelectedPlayerButton_Click(object sender, EventArgs e)
+        {
+            TeamModel team = (TeamModel)tournamentTeamsListBox.SelectedItem;
+
+            if (team == null)
+            {
+                return;
+            }
+
+            selectedTeams.Remove(team);
+            availableTeams.Add(team);
+
+            WireUpLists();
+        }
+
+        private void removeSelectedPrizeButton_Click(object sender, EventArgs e)
+        {
+            PrizeModel prize = (PrizeModel)prizesListBox.SelectedItem;
+
+            if (prize == null)
+            {
+                return;
+            }
+
+            // TODO - removes prize but it ramains in db and text file
+            selectedPrizes.Remove(prize);
 
             WireUpLists();
         }

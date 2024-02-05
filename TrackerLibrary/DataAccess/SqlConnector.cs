@@ -93,6 +93,7 @@ namespace TrackerLibrary.DataAccess
                 SaveTournament(connection, model);
                 SaveTournamentPrizes(connection, model);
                 SaveTournamentEntries(connection, model);
+                SaveTournamentRounds(connection, model);
             }
         }
 
@@ -120,7 +121,6 @@ namespace TrackerLibrary.DataAccess
                 connection.Execute("TOURNAMENT_TRACKER.USP_ADD_TOURNAMENT_PRIZE", p, commandType: CommandType.StoredProcedure);
             }
         }
-
         private void SaveTournamentEntries(IDbConnection connection, TournamentModel model)
         {
             foreach (TeamModel tm in model.EnteredTeams)
@@ -133,7 +133,39 @@ namespace TrackerLibrary.DataAccess
                 connection.Execute("TOURNAMENT_TRACKER.USP_ADD_TOURNAMENT_ENTRY", p, commandType: CommandType.StoredProcedure);
             }
         }
+        private void SaveTournamentRounds(IDbConnection connection, TournamentModel model)
+        {
+            // loop throug the rounds
+            // loop throug the matchups
+            // save the matchup
+            // loop through the entries and save them
 
+            foreach (List<MatchupModel> round in model.Rounds)
+            {
+                foreach (MatchupModel matchup in round)
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@TOURNAMENT_ID", model.Id);
+                    p.Add("@MATCHUP_ROUND", matchup.MatchupRound);
+                    p.Add("@ID", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    connection.Execute("TOURNAMENT_TRACKER.USP_ADD_MATCHUP", p, commandType: CommandType.StoredProcedure);
+
+                    matchup.Id = p.Get<int>("@ID");
+
+                    foreach (MatchupEntryModel entry in matchup.Entries)
+                    {
+                        p = new DynamicParameters();
+                        p.Add("@MATCHUP_ID", matchup.Id);
+                        p.Add("@PARENT_MATCHUP_ID", entry.ParentMatchup?.Id);                        
+                        p.Add("@TEAM_COMPETING_ID", entry.TeamCompeting?.Id);
+                        p.Add("@ID", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                        connection.Execute("TOURNAMENT_TRACKER.USP_ADD_MATCHUP_ENTRY", p, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+        }
         public List<PersonModel> GetPerson_All()
         {
             List<PersonModel> output;

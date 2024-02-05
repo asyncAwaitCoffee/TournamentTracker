@@ -32,7 +32,7 @@
             headerLabel = new Label();
             tournamentNameValue = new TextBox();
             tournamentNameLabel = new Label();
-            teamOneScoreValue = new TextBox();
+            entryFeeValue = new TextBox();
             entryFeeLabel = new Label();
             selectTeamDropDown = new ComboBox();
             selectTeamLabel = new Label();
@@ -77,13 +77,13 @@
             tournamentNameLabel.TabIndex = 9;
             tournamentNameLabel.Text = "Tournament Name:";
             // 
-            // teamOneScoreValue
+            // entryFeeValue
             // 
-            teamOneScoreValue.Location = new Point(181, 177);
-            teamOneScoreValue.Name = "teamOneScoreValue";
-            teamOneScoreValue.Size = new Size(100, 35);
-            teamOneScoreValue.TabIndex = 12;
-            teamOneScoreValue.Text = "0";
+            entryFeeValue.Location = new Point(181, 177);
+            entryFeeValue.Name = "entryFeeValue";
+            entryFeeValue.Size = new Size(100, 35);
+            entryFeeValue.TabIndex = 12;
+            entryFeeValue.Text = "0";
             // 
             // entryFeeLabel
             // 
@@ -241,6 +241,7 @@
             createTournamentButton.TabIndex = 24;
             createTournamentButton.Text = "Create Tournament";
             createTournamentButton.UseVisualStyleBackColor = true;
+            createTournamentButton.Click += createTournamentButton_Click;
             // 
             // CreateTournamentForm
             // 
@@ -260,7 +261,7 @@
             Controls.Add(createNewTeamLink);
             Controls.Add(selectTeamDropDown);
             Controls.Add(selectTeamLabel);
-            Controls.Add(teamOneScoreValue);
+            Controls.Add(entryFeeValue);
             Controls.Add(entryFeeLabel);
             Controls.Add(tournamentNameValue);
             Controls.Add(tournamentNameLabel);
@@ -279,7 +280,7 @@
         private Label headerLabel;
         private TextBox tournamentNameValue;
         private Label tournamentNameLabel;
-        private TextBox teamOneScoreValue;
+        private TextBox entryFeeValue;
         private Label entryFeeLabel;
         private ComboBox selectTeamDropDown;
         private Label selectTeamLabel;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TrackerLibrary.Models;
@@ -170,6 +171,11 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             }
 
             File.WriteAllLines(fileName.FullFilePath(), lines);
+        }
+
+        public static void SaveRoundsToFile(this TournamentModel model, string MatchupsFile, string MatchupEntriesFile)
+        {
+
         }
 
         public static void SaveToTournamentsFile(this List<TournamentModel> models, string fileName)

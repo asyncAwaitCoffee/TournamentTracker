@@ -95,6 +95,47 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             return output;
         }
 
+        public static List<TournamentModel> ConvertToTournamentModels(
+            this List<string> lines,
+            string teamsFileName,
+            string personsFileName,
+            string prizesFileName)
+        {
+            //id,TournamentName,EntryFee,(id|id|id - entered teams),(id|id|id - prizes),(id^id^id|id^id^id - rounds)
+            List<TournamentModel> output = new List<TournamentModel>();
+            List<TeamModel> teams = teamsFileName.FullFilePath().LoadFile().ConvertToTeamModels(personsFileName);
+            List<PrizeModel> prizes = prizesFileName.FullFilePath().LoadFile().ConvertToPrizeModels();
+
+            foreach (var line in lines)
+            {
+                string[] cols = line.Split(',');
+
+                TournamentModel tournament = new TournamentModel();
+                tournament.Id = int.Parse(cols[0]);
+                tournament.TournamentName = cols[1];
+                tournament.EntryFee = decimal.Parse(cols[2]);
+
+                string[] teamIds = cols[3].Split('|');
+
+                foreach (string id in teamIds)
+                {
+                    tournament.EnteredTeams.Add(teams.Where(t => int.Parse(id) == t.Id).First());
+                }
+
+                string[] prizeIds = cols[4].Split('|');
+                foreach (string id in teamIds)
+                {
+                    tournament.Prizes.Add(prizes.Where(p => int.Parse(id) == p.Id).First());
+                }
+
+                output.Add(tournament);
+
+                // TODO - capture rounds info
+            }
+
+            return output;
+        }
+
         public static void SaveToPrizesFile(this List<PrizeModel> models, string fileName)
         {
             List<string> lines = new List<string>();
@@ -129,6 +170,78 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             }
 
             File.WriteAllLines(fileName.FullFilePath(), lines);
+        }
+
+        public static void SaveToTournamentsFile(this List<TournamentModel> models, string fileName)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (TournamentModel t in models)
+            {
+                lines.Add($@"
+                    { t.Id },
+                    { t.TournamentName },
+                    { t.EntryFee },
+                    { ConvertTeamsListRoString(t.EnteredTeams) },
+                    { ConvertPrizesListRoString(t.Prizes) },
+                    { ConvertRoundsListRoString(t.Rounds) }");
+            }
+
+            File.WriteAllLines(fileName.FullFilePath(), lines);
+        }
+
+        //TODO - refactor Converts to single generic method
+
+        private static string ConvertRoundsListRoString(List<List<MatchupModel>> rounds)
+        {
+            string output = "";
+
+            foreach (List<MatchupModel> r in rounds)
+            {
+                output += $"{ ConvertMatchupsListRoString(r) }|";
+            }
+            output = output.TrimEnd('|');
+
+            return output;
+        }
+
+        private static string ConvertMatchupsListRoString(List<MatchupModel> matchups)
+        {
+            string output = "";
+
+            foreach (MatchupModel m in matchups)
+            {
+                output += $"{m.Id}^";
+            }
+            output = output.TrimEnd('^');
+
+            return output;
+        }
+
+        private static string ConvertPrizesListRoString(List<PrizeModel> prizes)
+        {
+            string output = "";
+
+            foreach (PrizeModel p in prizes)
+            {
+                output += $"{p.Id}|";
+            }
+            output = output.TrimEnd('|');
+
+            return output;
+        }
+
+        private static string ConvertTeamsListRoString(List<TeamModel> teams)
+        {
+            string output = "";
+
+            foreach (TeamModel t in teams)
+            {
+                output += $"{t.Id}|";
+            }
+            output = output.TrimEnd('|');
+
+            return output;
         }
 
         private static string ConvertPersonsListRoString(List<PersonModel> persons)

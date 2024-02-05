@@ -106,6 +106,7 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             List<TournamentModel> output = new List<TournamentModel>();
             List<TeamModel> teams = teamsFileName.FullFilePath().LoadFile().ConvertToTeamModels(personsFileName);
             List<PrizeModel> prizes = prizesFileName.FullFilePath().LoadFile().ConvertToPrizeModels();
+            List<MatchupModel> matchups = GlobalConfig.MatchupsFile.LoadFile().ConvertToMatchupModels();
 
             foreach (var line in lines)
             {
@@ -129,9 +130,24 @@ namespace TrackerLibrary.DataAccess.TextHelpers
                     tournament.Prizes.Add(prizes.Where(p => int.Parse(id) == p.Id).First());
                 }
 
+                // capture rounds info
+                string[] rounds = cols[5].Split('|');
+
+                foreach (string r in rounds)
+                {
+                    string[] matchupText = r.Split('^'); // matchups from text file
+                    List<MatchupModel> matchupModel = new List<MatchupModel>();
+
+                    foreach (string matchupModelTextId in matchupText)
+                    {
+                        matchupModel.Add(matchups.Where(m => m.Id == int.Parse(matchupModelTextId)).First());
+                    }
+
+                    tournament.Rounds.Add(matchupModel);
+                }
+
                 output.Add(tournament);
 
-                // TODO - capture rounds info
             }
 
             return output;
@@ -205,11 +221,18 @@ namespace TrackerLibrary.DataAccess.TextHelpers
 
                 MatchupEntryModel model = new MatchupEntryModel();
                 model.Id = int.Parse(cols[0]);
-                model.TeamCompeting = LookupTeamById(int.Parse(cols[1]));
+                if (cols[1].Length == 0 )
+                {
+                    model.TeamCompeting = null;
+                }
+                else
+                {
+                    model.TeamCompeting = LookupTeamById(int.Parse(cols[1]));
+                }                
                 model.Score = double.Parse(cols[2]);
                 if (int.TryParse(cols[3], out int parentId))
                 {
-                    model.ParentMatchup = LookupMatchupById(parentId));
+                    model.ParentMatchup = LookupMatchupById(parentId);
                 }
                 else
                 {
@@ -279,10 +302,7 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             }
             matchup.Id = currentId;
 
-            foreach (MatchupEntryModel entry in matchup.Entries)
-            {
-                entry.SaveEntryToFile(matchupEntriesFile);
-            }
+            matchups.Add(matchup);
 
             // save to file
             List<string> lines = new List<string>();
@@ -290,10 +310,29 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             {
 
                 lines.Add($@"
-                            {m.Id},
-                            { ConvertMatchupEntriesListToString(m.Entries)},
-                            {m.Winner?.Id},
-                            {m.MatchupRound}");
+                            { m.Id },
+                            { "" },
+                            { m.Winner?.Id },
+                            { m.MatchupRound }");
+            }
+
+            File.WriteAllLines(GlobalConfig.MatchupsFile.FullFilePath(), lines);
+
+            foreach (MatchupEntryModel entry in matchup.Entries)
+            {
+                entry.SaveEntryToFile(matchupEntriesFile);
+            }
+
+            // save to file
+            lines = new List<string>();
+            foreach (MatchupModel m in matchups)
+            {
+
+                lines.Add($@"
+                            { m.Id },
+                            { ConvertMatchupEntriesListToString(m.Entries) },
+                            { m.Winner?.Id },
+                            { m.MatchupRound }");
             }
 
             File.WriteAllLines(GlobalConfig.MatchupsFile.FullFilePath(), lines);
@@ -319,7 +358,7 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             foreach (MatchupEntryModel e in entries)
             {
 
-                lines.Add($"{ e.Id },{e.TeamCompeting.Id },{ e.Score },{ e.ParentMatchup?.Id }");
+                lines.Add($"{ e.Id },{e.TeamCompeting?.Id },{ e.Score },{ e.ParentMatchup?.Id }");
             }
 
             File.WriteAllLines(GlobalConfig.MatchupEntriesFile.FullFilePath(), lines);

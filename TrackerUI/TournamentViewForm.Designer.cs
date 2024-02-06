@@ -85,6 +85,7 @@
             roundDropDown.Name = "roundDropDown";
             roundDropDown.Size = new Size(209, 38);
             roundDropDown.TabIndex = 3;
+            roundDropDown.SelectedIndexChanged += roundDropDown_SelectedIndexChanged;
             // 
             // unplayedOnlyCheckbox
             // 
@@ -108,6 +109,7 @@
             matchupListBox.Name = "matchupListBox";
             matchupListBox.Size = new Size(326, 212);
             matchupListBox.TabIndex = 5;
+            matchupListBox.SelectedIndexChanged += matchupListBox_SelectedIndexChanged;
             // 
             // teamOneName
             // 

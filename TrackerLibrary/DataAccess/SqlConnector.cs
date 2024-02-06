@@ -197,5 +197,88 @@ namespace TrackerLibrary.DataAccess
 
             return output;
         }
+
+        public List<TournamentModel> GetTournament_All()
+        {
+            List<TournamentModel> output;
+
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                output = connection.Query<TournamentModel>("TOURNAMENT_TRACKER.USP_GET_TOURNAMENT_ALL").ToList();
+
+                foreach (TournamentModel tournament in output)
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@TOURNAMENT_ID", tournament.Id);
+
+                    // populate prizes
+                    tournament.Prizes = connection.Query<PrizeModel>("TOURNAMENT_TRACKER.USP_GET_PRIZES_BY_TOURNAMENT", p, commandType: CommandType.StoredProcedure).ToList();
+                    // populate teams
+                    tournament.EnteredTeams = connection.Query<TeamModel>("TOURNAMENT_TRACKER.USP_GET_TEAMS_BY_TOURNAMENT", p, commandType: CommandType.StoredProcedure).ToList();
+                    // get all matchups for this tournament
+                    List<MatchupModel> matchups = connection.Query<MatchupModel>("TOURNAMENT_TRACKER.USP_GET_MATCHUPS_BY_TOURNAMENT", p, commandType: CommandType.StoredProcedure).ToList();
+
+                    foreach (TeamModel team in tournament.EnteredTeams)
+                    {
+                        p = new DynamicParameters();
+                        p.Add("@TEAM_ID", team.Id);
+                        team.TeamMembers = connection.Query<PersonModel>("TOURNAMENT_TRACKER.USP_GET_TEAM_MEMBERS_BY_TEAM", p, commandType: CommandType.StoredProcedure).ToList();
+                    }
+
+                    // populate rounds
+
+                    foreach (MatchupModel matchup in matchups)
+                    {
+                        p = new DynamicParameters();
+                        p.Add("@MATCHUP_ID", matchup.Id);
+
+                        matchup.Entries = connection.Query<MatchupEntryModel>("TOURNAMENT_TRACKER.USP_GET_MATCHUP_ENTRIES_BY_MATCHUP", p, commandType: CommandType.StoredProcedure).ToList();
+
+                        // populate each matchup entry
+                        // populate each matchup
+
+                        List<TeamModel> allTeams = GetTeam_All();
+
+                        if (matchup.WinnerId > 0)
+                        {
+                            matchup.Winner = allTeams.Where(t => t.Id == matchup.WinnerId).First();
+                        }
+
+                        foreach (MatchupEntryModel entry in matchup.Entries)
+                        {
+                            if (entry.TeamCompetingId > 0)
+                            {
+                                entry.TeamCompeting = allTeams.Where(t => t.Id == entry.TeamCompetingId).First();
+                            }
+
+                            if (entry.ParentMatchupId > 0)
+                            {
+                                entry.ParentMatchup = matchups.Where(m => m.Id == entry.ParentMatchupId).First();
+                            }
+                        }
+                    }
+
+                    // TODO - same loop twice, refactor
+                    List<MatchupModel> currentRow = new List<MatchupModel>();
+                    int currentRound = 1;
+
+                    foreach (MatchupModel matchup in matchups)
+                    {
+                        if (matchup.MatchupRound > currentRound)
+                        {
+                            tournament.Rounds.Add(currentRow);
+                            currentRow = new List<MatchupModel>();
+                            currentRound++;
+                        }
+
+                        currentRow.Add(matchup);
+                    }
+
+                    tournament.Rounds.Add(currentRow);
+
+                }
+            }
+            return output;
+        }
     }
 }

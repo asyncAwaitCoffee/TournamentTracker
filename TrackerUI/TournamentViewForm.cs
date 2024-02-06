@@ -220,6 +220,21 @@ namespace TrackerUI
                 return;
             }
 
+            foreach (List<MatchupModel> round in tournament.Rounds)
+            {
+                foreach (MatchupModel mm in round)
+                {
+                    foreach (MatchupEntryModel me in mm.Entries)
+                    {
+                        if (me.ParentMatchup?.Id == matchup.Id)
+                        {
+                            me.TeamCompeting = matchup.Winner;
+                            GlobalConfig.Connection.UpdateMatchup(mm);
+                        }
+                    }
+                }
+            }
+
             LoadMatchups((int)roundDropDown.SelectedItem);
 
             GlobalConfig.Connection.UpdateMatchup(matchup);

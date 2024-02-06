@@ -9,7 +9,7 @@ using TrackerLibrary.Models;
 
 namespace TrackerLibrary.DataAccess.TextHelpers
 {
-    public static class TextConnectorProceesor
+    public static class TextConnectorProcessor
     {
         public static string FullFilePath(this string fileName)
         {
@@ -143,7 +143,11 @@ namespace TrackerLibrary.DataAccess.TextHelpers
 
                     foreach (string matchupModelTextId in matchupText)
                     {
-                        matchupModel.Add(matchups.Where(m => m.Id == int.Parse(matchupModelTextId)).First());
+                        List<MatchupModel> found = matchups.Where(m => m.Id == int.Parse(matchupModelTextId)).ToList();
+                        if (found.Count > 0)
+                        {
+                            matchupModel.Add(found.First());
+                        }
                     }
 
                     tournament.Rounds.Add(matchupModel);

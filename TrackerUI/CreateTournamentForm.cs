@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -148,6 +149,11 @@ namespace TrackerUI
             // Create all of the prizes entries
             // Create all of the team entries
             GlobalConfig.Connection.CreateTournament(tm);
+
+            TournamentViewForm form = new TournamentViewForm(tm);
+
+            form.Show();
+            this.Close();
         }
     }
 }

@@ -85,6 +85,8 @@ namespace TrackerLibrary.DataAccess
             tournaments.Add(model);
 
             tournaments.SaveToTournamentsFile();
+
+            TournamentLogic.UpdateTournametResults(model);
         }
 
         public List<PersonModel> GetPerson_All()

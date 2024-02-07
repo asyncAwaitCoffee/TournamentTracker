@@ -10,17 +10,9 @@ namespace TrackerLibrary.DataAccess
 {
     public class TextConnector : IDataConnection
     {
-        // TODO - files constants moved to GlobalConfig
-        private const string PrizesFile = "PrizeModels.csv";
-        private const string PersonsFile = "PersonModels.csv";
-        private const string TeamsFile = "TeamModels.csv";
-        private const string TournamentsFile = "TournamentModels.csv";
-        private const string MatchupsFile = "MatchupModels.csv";
-        private const string MatchupEntriesFile = "MatchupEntryModels.csv";
-
-        public PersonModel CreatePerson(PersonModel model)
+        public void CreatePerson(PersonModel model)
         {
-            List<PersonModel> persons = PersonsFile.FullFilePath().LoadFile().ConvertToPersonModels();
+            List<PersonModel> persons = GlobalConfig.PersonsFile.FullFilePath().LoadFile().ConvertToPersonModels();
 
             int currentId = 1;
             if (persons.Count > 0)
@@ -32,16 +24,14 @@ namespace TrackerLibrary.DataAccess
 
             persons.Add(model);
 
-            persons.SaveToPersonsFile(PersonsFile);
-
-            return model;
+            persons.SaveToPersonsFile();
         }
 
         //TODO - implement CreatePrize method
-        public PrizeModel CreatePrize(PrizeModel model)
+        public void CreatePrize(PrizeModel model)
         {
             // Load the text file and convert the text to List<PrizeModel>
-            List<PrizeModel> prizes =  PrizesFile.FullFilePath().LoadFile().ConvertToPrizeModels();
+            List<PrizeModel> prizes = GlobalConfig.PrizesFile.FullFilePath().LoadFile().ConvertToPrizeModels();
             // Get next Id
             int currentId = 1;
             if (prizes.Count > 0)
@@ -55,15 +45,13 @@ namespace TrackerLibrary.DataAccess
             // Convert the prizes to Lisr<string>
             // Save the List<string> ti the text file
 
-            prizes.SaveToPrizesFile(PrizesFile);
-
-            return model;
+            prizes.SaveToPrizesFile();
 
         }
 
-        public TeamModel CreateTeam(TeamModel model)
+        public void CreateTeam(TeamModel model)
         {
-            List<TeamModel> teams = TeamsFile.FullFilePath().LoadFile().ConvertToTeamModels(PersonsFile);
+            List<TeamModel> teams = GlobalConfig.TeamsFile.FullFilePath().LoadFile().ConvertToTeamModels();
             
             int currentId = 1;
             if (teams.Count > 0)
@@ -74,18 +62,16 @@ namespace TrackerLibrary.DataAccess
 
             teams.Add(model);
 
-            teams.SaveToTeamsFile(TeamsFile);
-
-            return model;
+            teams.SaveToTeamsFile();
         }
 
         // TODO - refactor other methods to void
         public void CreateTournament(TournamentModel model)
         {
-            List<TournamentModel> tournaments = TournamentsFile
+            List<TournamentModel> tournaments = GlobalConfig.TournamentsFile
                 .FullFilePath()
                 .LoadFile()
-                .ConvertToTournamentModels(TeamsFile, PersonsFile, PrizesFile);
+                .ConvertToTournamentModels();
 
             int currentId = 1;
             if (tournaments.Count > 0)
@@ -94,29 +80,31 @@ namespace TrackerLibrary.DataAccess
             }
             model.Id = currentId;
 
-            model.SaveRoundsToFile(MatchupsFile, MatchupEntriesFile);
+            model.SaveRoundsToFile();
 
             tournaments.Add(model);
 
-            tournaments.SaveToTournamentsFile(TournamentsFile);
+            tournaments.SaveToTournamentsFile();
+
+            TournamentLogic.UpdateTournametResults(model);
         }
 
         public List<PersonModel> GetPerson_All()
         {
-            return PersonsFile.FullFilePath().LoadFile().ConvertToPersonModels();
+            return GlobalConfig.PersonsFile.FullFilePath().LoadFile().ConvertToPersonModels();
         }
 
         public List<TeamModel> GetTeam_All()
         {
-            return TeamsFile.FullFilePath().LoadFile().ConvertToTeamModels(PersonsFile);
+            return GlobalConfig.TeamsFile.FullFilePath().LoadFile().ConvertToTeamModels();
         }
 
         public List<TournamentModel> GetTournament_All()
         {
-            return TournamentsFile
+            return GlobalConfig.TournamentsFile
                 .FullFilePath()
                 .LoadFile()
-                .ConvertToTournamentModels(TeamsFile, PersonsFile, PrizesFile);
+                .ConvertToTournamentModels();
         }
 
         public void UpdateMatchup(MatchupModel model)
